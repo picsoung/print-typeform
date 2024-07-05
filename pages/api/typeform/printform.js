@@ -16,9 +16,9 @@ export default async (req, res) => {
   }
   const { form_id } = req.query;
   const formDef = await fetch(`https://api.typeform.com/forms/${form_id}`, {
-    headers: {
-      Authorization: `Bearer ${session.accessToken}`,
-    },
+    // headers: {
+    //   Authorization: `Bearer ${session.accessToken}`,
+    // },
   }).then((resp) => resp.json());
 
   if (!formDef) {
