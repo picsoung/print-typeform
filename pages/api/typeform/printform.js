@@ -9,11 +9,11 @@ import fs from "fs";
 export default async (req, res) => {
   // typeform/printform?form_id=abc123
 
-  const session = await getSession({ req });
-  console.log("session", session);
-  if (!session) {
-    return res.send({ eror: "Not authorized" });
-  }
+  // const session = await getSession({ req });
+  // console.log("session", session);
+  // if (!session) {
+  //   return res.send({ eror: "Not authorized" });
+  // }
   const { form_id } = req.query;
   const formDef = await fetch(`https://api.typeform.com/forms/${form_id}`, {
     // headers: {
