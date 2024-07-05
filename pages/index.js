@@ -6,14 +6,14 @@ import { useEffect, useState } from "react";
 import { useSession, signIn, signOut } from "next-auth/react";
 
 export default function Home() {
-  const { data: session } = useSession();
+  const { data: session, status } = useSession();
   const [forms, setForms] = useState([])
 
   useEffect(()=>{
-    if(session){
+    if(status==='authenticated'){
       getForms();
     }
-  },[session])
+  },[status])
 
   const getForms = async () => {
     const forms = await fetch('/api/typeform/getforms').then((resp) => resp.json())
