@@ -196,10 +196,12 @@ const displayQuestionTitle = (doc, field, index, groupIndex, isGroup) => {
     .text(`${index + 1}${groupIndexTxt} - [${field.type}] ${field.title}`, {
       continued: required,
     });
-  doc
-    .fillColor("gray")
-    .fontSize(10)
-    .text(field.properties.description, { oblique: true });
+  if (field.properties&& field.properties.description) {
+    doc
+      .fillColor("gray")
+      .fontSize(10)
+      .text(field.properties.description, { oblique: true });
+  }
   resetFont(doc);
   if (required) {
     doc.fillColor("red").fontSize(12).text(" *", { continued: false });
