@@ -7,7 +7,7 @@ export const SignInButton = ({ children }: any) => {
     <button
       className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
       type="button"
-      onClick={() => signIn()}
+      onClick={() => signIn("typeform")}
     >
       Sign in with Typeform
     </button>
