@@ -5,47 +5,117 @@ import axios from "axios";
 import SVGtoPDF from "svg-to-pdfkit";
 import qr from "qr-image";
 import fs from "fs";
+import { NextRequest, NextResponse } from 'next/server';
+import { auth } from "@/auth"
 
-const printForm = async (req, res) => {
-  // typeform/printform?form_id=abc123
+export async function GET(request: NextRequest) {
+  // Your logic here
+  return NextResponse.json({ message: "This is the printform endpoint" });
+}
 
-  // const session = await getSession({ req });
-  // console.log("session", session);
-  // if (!session) {
-  //   return res.send({ eror: "Not authorized" });
+  // if (!session || !session.accessToken) {
+  //   return NextResponse.json({ error: "Not authorized" }, { status: 401 });
   // }
-  const { form_id } = req.query;
-  const formDef = await fetch(`https://api.typeform.com/forms/${form_id}`, {
-    // headers: {
-    //   Authorization: `Bearer ${session.accessToken}`,
-    // },
-  }).then((resp) => resp.json());
 
-  if (!formDef) {
-    return res.send({ eror: "Error retrieving form" });
-  }
+  // const form_id = request.nextUrl.searchParams.get('form_id');
+  // if (!form_id) {
+  //   return NextResponse.json({ error: "Missing form_id" }, { status: 400 });
+  // }
 
-  const doc = new PDFDocument();
-  doc.pipe(res);
-  doc.initForm();
-  let title = doc.font("Helvetica-Bold").fontSize(18).text(formDef.title);
-  doc.font("Helvetica").fontSize(12);
-  let x = title.x;
-  let y = title.y;
+  // try {
+  //   const formDef = await fetch(`https://api.typeform.com/forms/${form_id}`, {
+  //     headers: {
+  //       Authorization: `Bearer ${session.accessToken}`,
+  //     },
+  //   }).then((resp) => resp.json());
 
-  await processFields(formDef.fields, doc, x, y);
+  //   if (!formDef) {
+  //     return NextResponse.json({ error: "Error retrieving form" }, { status: 500 });
+  //   }
 
-  doc.fontSize(8).text("Printed by Typeform2PDF", x, doc.page.height - 30, {
-    height: doc.page.height,
-  });
-  var code = qr.imageSync(formDef._links.display, { type: "png" });
-  doc.image(code, doc.page.width - 100, doc.page.height - 100, { width: 100 });
+  //   // Create a new PDF document
+  //   const doc = new PDFDocument();
 
-  doc.end();
-  res.writeHead(200, {
-    "Content-Type": "application/pdf",
-  });
-};
+  //   // Create a stream to collect PDF data
+  //   const chunks: Uint8Array[] = [];
+  //   doc.on('data', (chunk) => chunks.push(chunk));
+
+  //   // Generate PDF content
+  //   doc.initForm();
+  //   let title = doc.font("Helvetica-Bold").fontSize(18).text(formDef.title);
+  //   doc.font("Helvetica").fontSize(12);
+  //   let x = title.x;
+  //   let y = title.y;
+
+  //   await processFields(formDef.fields, doc, x, y);
+
+  //   doc.fontSize(8).text("Printed by Typeform2PDF", x, doc.page.height - 30, {
+  //     height: doc.page.height,
+  //   });
+  //   var code = qr.imageSync(formDef._links.display, { type: 'png' });
+  //   doc.image(code, doc.page.width - 100, doc.page.height - 100, { width: 100 });
+
+  //   doc.end();
+
+  //   // Wait for the PDF to finish generating
+  //   await new Promise((resolve) => doc.on('end', resolve));
+
+  //   // Combine chunks into a single Uint8Array
+  //   const pdfData = new Uint8Array(Buffer.concat(chunks));
+
+  //   // Return the PDF as a response
+  //   return new NextResponse(pdfData, {
+  //     headers: {
+  //       'Content-Type': 'application/pdf',
+  //       'Content-Disposition': `attachment; filename="form_${form_id}.pdf"`,
+  //     },
+  //   });
+
+  // } catch (error) {
+  //   console.error('Error generating PDF:', error);
+  //   return NextResponse.json({ error: "Failed to generate PDF" }, { status: 500 });
+  // }
+// }
+// const printForm = async (req, res) => {
+//   // typeform/printform?form_id=abc123
+
+//   // const session = await getSession({ req });
+//   // console.log("session", session);
+//   // if (!session) {
+//   //   return res.send({ eror: "Not authorized" });
+//   // }
+//   const { form_id } = req.query;
+//   const formDef = await fetch(`https://api.typeform.com/forms/${form_id}`, {
+//     // headers: {
+//     //   Authorization: `Bearer ${session.accessToken}`,
+//     // },
+//   }).then((resp) => resp.json());
+
+//   if (!formDef) {
+//     return res.send({ eror: "Error retrieving form" });
+//   }
+
+//   const doc = new PDFDocument();
+//   doc.pipe(res);
+//   doc.initForm();
+//   let title = doc.font("Helvetica-Bold").fontSize(18).text(formDef.title);
+//   doc.font("Helvetica").fontSize(12);
+//   let x = title.x;
+//   let y = title.y;
+
+//   await processFields(formDef.fields, doc, x, y);
+
+//   doc.fontSize(8).text("Printed by Typeform2PDF", x, doc.page.height - 30, {
+//     height: doc.page.height,
+//   });
+//   var code = qr.imageSync(formDef._links.display, { type: "png" });
+//   doc.image(code, doc.page.width - 100, doc.page.height - 100, { width: 100 });
+
+//   doc.end();
+//   res.writeHead(200, {
+//     "Content-Type": "application/pdf",
+//   });
+// };
 
 const fetchImage = async function (src) {
   const image = await axios.get(src, {
@@ -78,7 +148,7 @@ const resetFont = (doc) => {
   doc.font("Helvetica").fillColor("black").fontSize(12);
 };
 
-const renderField = async (field, doc, index) => {
+const renderField = async (field, doc, index?) => {
   if (
     field.type === "dropdown" ||
     field.type === "multiple_choice" ||
@@ -188,7 +258,7 @@ const renderField = async (field, doc, index) => {
   }
   doc.moveDown(1);
 };
-const displayQuestionTitle = (doc, field, index, groupIndex, isGroup) => {
+const displayQuestionTitle = (doc, field, index, groupIndex?, isGroup?) => {
   let required = field.validations && field.validations.required;
   let groupIndexTxt = isGroup ? `.${indexToLetter(groupIndex)}` : "";
   let q_txt = doc
@@ -196,7 +266,7 @@ const displayQuestionTitle = (doc, field, index, groupIndex, isGroup) => {
     .text(`${index + 1}${groupIndexTxt} - [${field.type}] ${field.title}`, {
       continued: required,
     });
-  if (field.properties&& field.properties.description) {
+  if (field.properties && field.properties.description) {
     doc
       .fillColor("gray")
       .fontSize(10)
@@ -255,7 +325,7 @@ function drawRadioButton(doc, x, y, shape, text) {
 }
 
 function generateStepsText(properties) {
-  let stepsArray = [];
+  let stepsArray: string[] = [];
   let startAt = properties.start_at_one ? 1 : 0;
   let endAt = startAt + properties.steps - 1; // Adjust for inclusive range
 
@@ -266,5 +336,3 @@ function generateStepsText(properties) {
 
   return stepsArray;
 }
-
-export default printForm;

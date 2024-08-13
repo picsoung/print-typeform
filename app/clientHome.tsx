@@ -1,22 +1,18 @@
-'use client';
+"use client";
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { SignInButton } from "./components/sign-in";
 import { Button } from "./components/ui/button";
+import LandingPage from "./landingPage";
+import FormsList from "./formsList";
+import { Form, FormsApiResponse } from "./types/forms";
 
-interface Form {
-  id: string;
-  title: string;
-}
-
-interface FormsApiResponse {
-  items: Form[];
-}
+import { signIn, signOut } from "next-auth/react";
 
 export default function ClientHome({ initialSession }) {
   const [forms, setForms] = useState<Form[]>([]);
   const [session, setSession] = useState(initialSession);
+  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
     if (session) {
@@ -25,6 +21,7 @@ export default function ClientHome({ initialSession }) {
   }, [session]);
 
   const getForms = async () => {
+    setIsLoading(true);
     const forms: FormsApiResponse = await fetch("/api/typeform/getforms").then(
       (resp) => resp.json()
     );
@@ -32,6 +29,7 @@ export default function ClientHome({ initialSession }) {
     if (forms) {
       console.log("setforms", forms.items);
       setForms(forms.items);
+      setIsLoading(false);
     }
   };
 
@@ -45,56 +43,40 @@ export default function ClientHome({ initialSession }) {
 
   return (
     <div className="flex flex-col h-screen">
+      <header className="sticky top-0 bg-white shadow-md z-50">
+        <div className="max-w-7xl mx-auto p-4 flex justify-between items-center">
+          <h1 className="text-2xl font-bold">Typeform2PDF</h1>
+          {session ? (
+            <button
+              className="bg-transparent text-red-500 border border-red-500 px-4 py-2 rounded hover:bg-red-500 hover:text-white transition"
+              onClick={() => signOut()}
+            >
+              Logout
+            </button>
+          ) : (
+            <button
+              className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
+              onClick={() => signIn("typeform")}
+            >
+              Sign In
+            </button>
+          )}
+        </div>
+      </header>
       <main className="flex-1">
-        <section className="w-full h-full flex items-center justify-center border-y bg-primary">
-          <div className="px-4 md:px-6 space-y-10 xl:space-y-16">
-            <div className="grid max-w-[1300px] mx-auto gap-4 px-4 sm:px-6 md:px-10 md:grid-cols-2 md:gap-16">
-              <div>
-                <h1 className="lg:leading-tighter text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl xl:text-[3.4rem] 2xl:text-[3.75rem] text-primary-foreground">
-                  Print your Typeform surveys to PDF
-                </h1>
-                <p className="mx-auto max-w-[700px] text-primary-foreground md:text-xl">
-                  Easily convert your Typeform surveys to PDF with our simple
-                  and secure tool.
-                </p>
-                <div className="mt-6">
-                  <SignInButton />
-                </div>
-                <div className="mt-6">
-                  <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
-                    Button
-                  </button>
-                </div>
-              </div>
-              <div className="hidden md:block">
-                <img
-                  src="/placeholder.svg"
-                  width="550"
-                  height="310"
-                  alt="Hero"
-                  className="mx-auto aspect-video overflow-hidden rounded-xl object-cover"
-                />
-              </div>
-            </div>
-          </div>
+        <section className="w-full h-full flex items-center justify-center border-y bg-primary py-8">
+          {session ? (
+            <FormsList forms={forms} isLoading={isLoading} />
+          ) : (
+            <LandingPage />
+          )}
         </section>
-        {session && (
-          <ul>
-            {forms.map((f) => (
-              <li key={f.id}>
-                <Link href={`/api/typeform/printform?form_id=${f.id}`}>
-                  {f.title}
-                </Link>
-              </li>
-            ))}
-          </ul>
-        )}
       </main>
       <footer className="flex flex-col gap-2 sm:flex-row py-6 w-full shrink-0 items-center px-4 md:px-6 border-t bg-primary">
         <p className="text-xs text-primary-foreground">
-          &copy; 2024 Acme Inc. All rights reserved.
+          &copy; 2024 Nicolas Grenié
         </p>
-        <nav className="sm:ml-auto flex gap-4 sm:gap-6">
+        {/* <nav className="sm:ml-auto flex gap-4 sm:gap-6">
           <Link
             href="#"
             className="text-xs hover:underline underline-offset-4 text-primary-foreground"
@@ -109,7 +91,7 @@ export default function ClientHome({ initialSession }) {
           >
             Privacy
           </Link>
-        </nav>
+        </nav> */}
       </footer>
     </div>
   );

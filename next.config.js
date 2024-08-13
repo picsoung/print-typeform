@@ -13,6 +13,10 @@ const nextConfig = {
 
   //   return config;
   // },
+  experimental: {
+    instrumentationHook: true,
+    serverComponentsExternalPackages: ['pdfkit']
+  },
 }
 
 module.exports = nextConfig

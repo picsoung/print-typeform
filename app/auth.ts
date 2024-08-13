@@ -1,6 +1,6 @@
 import NextAuth from "next-auth";
-
-export const { handlers, signIn, signOut, auth } = NextAuth({
+ 
+export const { handlers, auth } = NextAuth({
   pages: {
     signIn: "/login",
   },
@@ -15,11 +15,10 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         url: "https://api.typeform.com/oauth/authorize",
         params: { scope: "accounts:read forms:read" },
       },
+      checks:["none"],
       token: "https://api.typeform.com/oauth/token",
       userinfo: "https://api.typeform.com/me",
-      profile(profile, tokens) {
-        console.log("tokens", tokens);
-        console.log("profile", profile);
+      async profile(profile, tokens) {
         return {
           id: profile.user_id,
           email: profile.email,
@@ -31,14 +30,12 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
   ],
   callbacks: {
     jwt({ token, user }: { token: any; user: any }) {
-      console.log("JWWWT", token, user)
       if (user) {
-        token.accessToken = user.access_token;
+        token.accessToken = user.accessToken;
       }
       return token;
     },
     session({ session, token }: { session: any; token: any }) {
-      console.log("session", token, session)
       session.accessToken = token.accessToken;
       return session;
     },
