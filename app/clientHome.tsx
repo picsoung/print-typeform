@@ -23,7 +23,7 @@ export default function ClientHome({ initialSession }) {
   const getForms = async () => {
     setIsLoading(true);
     const forms: FormsApiResponse = await fetch("/api/typeform/getforms").then(
-      (resp) => resp.json()
+      (resp) => resp.json(),
     );
     console.log(forms);
     if (forms) {
@@ -36,7 +36,7 @@ export default function ClientHome({ initialSession }) {
   const printForm = async (formId) => {
     console.log("formId", formId);
     const pdf = await fetch(`/api/typeform/printform?form_id=${formId}`).then(
-      (resp) => resp.json()
+      (resp) => resp.json(),
     );
     console.log("pdf", pdf);
   };
