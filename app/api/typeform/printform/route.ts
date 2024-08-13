@@ -145,7 +145,7 @@ const renderField = async (field, doc, index?) => {
                 .text(instruction_text, { oblique: true });
         }
         resetFont(doc);
-
+        doc.x += 20
         for (const [choiceIndex, choice] of field.properties.choices.entries()) {
             doc.moveDown(0.5);
             let opt = doc.text(`[ ] (${indexToLetter(choiceIndex)}) ${choice.label}`);
@@ -174,6 +174,7 @@ const renderField = async (field, doc, index?) => {
             doc.text(`[ ] Other`);
             // doc.formText(`field.${field.id}`, 200, 20);
         }
+        resetFont(doc);
     } else if (field.type === "yes_no" || field.type === "legal") {
         doc.text(`[ ] Yes`);
         doc.text(`[ ] No`);
