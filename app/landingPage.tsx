@@ -14,15 +14,10 @@ export default function LandingPage() {
           <div className="mt-6">
             <SignInButton />
           </div>
-          <div className="mt-6">
-            <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
-              Button
-            </button>
-          </div>
         </div>
         <div className="hidden md:block">
           <img
-            src="/placeholder.svg"
+            src="/typeform2pdf.png"
             width="550"
             height="310"
             alt="Hero"
