@@ -311,7 +311,7 @@ PDFDocument.prototype.addSVG = function (svg, x, y, options) {
 
 function drawRadioButton(doc, x, y, shape, text) {
   if (shape) {
-    const readFileAsync = fs.readFileSync(`public/shapes/${shape}.svg`, "utf8");
+    const readFileAsync = fs.readFileSync(`/shapes/${shape}.svg`, "utf8");
     doc.addSVG(readFileAsync, x, y, {
       width: 30,
       preserveAspectRatio: "xMinYMin meet",
