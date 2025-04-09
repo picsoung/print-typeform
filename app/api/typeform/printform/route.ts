@@ -5,6 +5,7 @@ import PDFDocument from "pdfkit";
 import axios from "axios";
 import qr from "qr-image";
 import fs from "fs";
+import path from "path";
 
 import SVGtoPDF from "svg-to-pdfkit";
 
@@ -289,7 +290,8 @@ const processFields = async (fields, doc, x, y) => {
 
 function drawRadioButton(doc, x, y, shape, text) {
     if (shape) {
-        const readFileAsync = fs.readFileSync(`./public/shapes/${shape}.svg`, "utf8");
+        const svgPath = path.join(process.cwd(), 'public', 'shapes', `${shape}.svg`);
+        const readFileAsync = fs.readFileSync(svgPath, "utf8");
         doc.addSVG(readFileAsync, x, y, {
             width: 30,
             preserveAspectRatio: "xMinYMin meet",
